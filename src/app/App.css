@@ -47,7 +47,7 @@
     min-height: 80px;
  }
 
- @media (max-width: 768px) {
+ @media (max-width: 650px) {
     .hide-on-mobile {
       display: none;
     }
