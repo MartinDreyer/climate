@@ -1,113 +1,262 @@
-import Image from 'next/image'
+'use client'
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import "./App.css";
+import Box from "@/components/Box";
+
+const initialColumns = [
+  {
+    id: "suggestions",
+    name: "Forslag",
+    items: [
+      {
+        name: 'Lavere hastigheden i byen',
+        amount: 53.33,
+        backgroundColor: '#664144',
+        id: 'id-0',
+        co2: 16000,
+        info: "Fartgrænser sænkes med 20 kilometer i timen"
+      },
+      {
+        name: 'Lavere hastighed på Fynske Motorvej',
+        amount: 46.66,
+        backgroundColor: '#88722C',
+        id: 'id-1',
+        co2: 14000,
+        info: "Fartgrænsen sænkes til 90 kilometer i timen"
+
+      },
+      {
+        name: 'Bedre kollektiv trafik',
+        amount: 30,
+        backgroundColor: '#92961E',
+        id: 'id-2',
+        co2: 9000,
+        info: "Separate busbaner og flere afgange"
+
+      },
+      {
+        name: 'Non-road',
+        amount: 33.33,
+        backgroundColor: '#F9844A',
+        id: 'id-3',
+        co2: 10000,
+        info: "Indkøb af maskiner, der fremmer grøn omstilling"
+      },
+      {
+        name: 'Klimavenlige byområder',
+        amount: 66.66,
+        backgroundColor: '#F9C74F',
+        id: 'id-4',
+        co2: 20000,
+        info: "Flere zoner til fodgængere og cyklister, især omkring skoler"
+      },
+      {
+        name: 'Elektrificering og parkering',
+        amount: 70,
+        backgroundColor: '#90BE6D',
+        id: 'id-5',
+        co2: 21000,
+        info: "40 procent af biler skal være elbiler samt elbilparkeringspladser"
+
+      },
+      {
+        name: 'Samkørsel og delebiler',
+        amount: 33.33,
+        backgroundColor: '#43AA8B',
+        id: 'id-6',
+        co2: 10000,
+        info: "Fremme samkørsel og parkeringspladser til delebiler"
+      },
+      {
+        name: 'Trafikøer',
+        amount: 60,
+        backgroundColor: '#4D908E',
+        id: 'id-7',
+        co2: 18000,
+        info: "Vejlukninger, så bilister skal ud på de store veje for at køre på tværs af områder"
+      },
+      {
+        name: 'Trafikøer uden for Ring 2',
+        amount: 43.33,
+        backgroundColor: '#577590',
+        id: 'id-8',
+        co2: 13000,
+        info: "Vejlukninger uden for ringvejen omkring byen, så bilister ikke kan køre mellem områderne"
+      },
+      {
+        name: 'Nulemissionszoner inden for Ring 2',
+        amount: 153.33,
+        backgroundColor: '#277DA1',
+        id: 'id-9',
+        co2: 46000,
+        info: "Områder, hvor benzin- og hybridbiler ikke må køre ind"
+      }
+
+    ]
+  },
+  {
+    id: "stack",
+    name: "Din plan",
+    items: []
+  }
+
+]
+
+
+function App() {
+  const [stores, setStores] = useState(initialColumns);
+  const [totalCO2, setTotalCO2] = useState(0);
+  const [selectedItemInfo, setSelectedItemInfo] = useState(null);
+
+
+
+  const handleDragAndDrop = (results) => {
+    const { source, destination, type } = results;
+
+    if (!destination) return;
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    )
+      return;
+
+    if (type === "group") {
+      const reorderedStores = [...stores];
+
+      const storeSourceIndex = source.index;
+      const storeDestinatonIndex = destination.index;
+
+      const [removedStore] = reorderedStores.splice(storeSourceIndex, 1);
+      reorderedStores.splice(storeDestinatonIndex, 0, removedStore);
+
+      return setStores(reorderedStores);
+    }
+    const itemSourceIndex = source.index;
+    const itemDestinationIndex = destination.index;
+
+    const storeSourceIndex = stores.findIndex(
+      (store) => store.id === source.droppableId
+    );
+    const storeDestinationIndex = stores.findIndex(
+      (store) => store.id === destination.droppableId
+    );
+
+    const newSourceItems = [...stores[storeSourceIndex].items];
+    const newDestinationItems =
+      source.droppableId !== destination.droppableId
+        ? [...stores[storeDestinationIndex].items]
+        : newSourceItems;
+
+    const [deletedItem] = newSourceItems.splice(itemSourceIndex, 1);
+    newDestinationItems.splice(itemDestinationIndex, 0, deletedItem);
+
+    const newStores = [...stores];
+
+    newStores[storeSourceIndex] = {
+      ...stores[storeSourceIndex],
+      items: newSourceItems,
+    };
+    newStores[storeDestinationIndex] = {
+      ...stores[storeDestinationIndex],
+      items: newDestinationItems,
+    };
+
+    setStores(newStores);
+
+    if (
+      source.droppableId === "suggestions" &&
+      destination.droppableId === "stack"
+    ) {
+      const addedItem = newDestinationItems[itemDestinationIndex];
+      setTotalCO2((prevTotalCO2) => prevTotalCO2 + addedItem.co2);
+      setSelectedItemInfo(addedItem)
+    } else if (
+      source.droppableId === "stack" &&
+      destination.droppableId === "suggestions"
+    ) {
+      const removedItem = deletedItem; // Use the deletedItem here
+      setTotalCO2((prevTotalCO2) => prevTotalCO2 - removedItem.co2);
+      setSelectedItemInfo(null)
+    }
+
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div>
+      <div className="game-container">
+        <div>
+          <DragDropContext onDragEnd={handleDragAndDrop}>
+            <div className="header">
+              <h1>Hvordan skal din klimaplan se ud?</h1>
+            </div>
+            <div className="total-co2">Tons CO2 sparet årligt: <span
+              className={
+                totalCO2 < 100000 ? "text-red-500 font-bold" : "text-green-700 font-bold"
+              }
+            >
+              {totalCO2}
+            </span></div>
+            <div className="info-besparelse">
+              {selectedItemInfo && (
+                <>
+                  <p><b>Tiltag:</b> {selectedItemInfo.name}</p>
+                  <p><b>Info:</b> {selectedItemInfo.info}</p>
+                  <p><b>Besparelse:</b> {selectedItemInfo.co2} ton CO2 årligt</p>
+                </>
+              )}
+            </div>
+            <Droppable droppableId="ROOT" type="group">
+              {(provided) => (
+                <div className="flex" {...provided.droppableProps} ref={provided.innerRef}>
+                  {stores.map((store, index) => (
+                    <div className="w-1/2" key={store.id}>
+                      <StoreList {...store} />
+                    </div>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+
+          </DragDropContext>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
+
+function StoreList({ name, items, id }) {
+  return (
+    <Droppable droppableId={id}>
+      {(provided) => (
+        <div className="min-h-[800px] bg-gray-100 p-4 rounded-lg text-center" {...provided.droppableProps} ref={provided.innerRef}>
+          <div className="store-container flex">
+            <h3 className="box-header">{name}</h3>
+          </div>
+          <div>
+            {items.map((item, index) => (
+              <Draggable draggableId={item.id} index={index} key={item.id}>
+                {(provided) => (
+                  <div
+                    className="item-container"
+                    {...provided.dragHandleProps}
+                    {...provided.draggableProps}
+                    ref={provided.innerRef}
+                  >
+                    <Box size={item.amount} color={item.backgroundColor} name={item.name} />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        </div>
+      )}
+    </Droppable>
+  );
+}
+
+export default App;

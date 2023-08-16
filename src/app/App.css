@@ -1,0 +1,63 @@
+:root {
+    --border-radius-500: 8px;
+    --color-on-background: #ffffff;
+    --fonts-primary: Karla, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+  }
+
+  .header {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .game-container {
+    min-height: 600px;
+    background-color: #ffffff;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .total-co2 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 40px;
+  } 
+
+  .store-container {
+    font-size: 28px;
+    font-weight: bold;
+
+
+  }
+
+  .box-header{
+    padding-bottom: 10px;
+    width: 100%;
+ }
+
+ .info-besparelse {
+    margin-bottom: 20px;
+ }
+  
+    
+  /* 
+  
+
+
+  .store-container {
+    font-size: 48px;
+    font-weight: bold;
+  }
+  
+ 
+  .total-co2 {
+    text-align: center;
+    font-size: 36px;
+  } */
