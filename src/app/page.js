@@ -47,7 +47,7 @@ const initialColumns = [
       {
         name: 'Klimavenlige byområder',
         amount: 66.66,
-        backgroundColor: '#F9C74F',
+        backgroundColor: '#a6784F',
         id: 'id-4',
         co2: 20000,
         info: "Flere zoner til fodgængere og cyklister, især omkring skoler"
@@ -106,11 +106,9 @@ const initialColumns = [
 
 
 function App() {
-  const [stores, setStores] = useState(initialColumns);
+  const [plans, setPlans] = useState(initialColumns);
   const [totalCO2, setTotalCO2] = useState(0);
   const [selectedItemInfo, setSelectedItemInfo] = useState(null);
-
-
 
   const handleDragAndDrop = (results) => {
     const { source, destination, type } = results;
@@ -124,52 +122,55 @@ function App() {
       return;
 
     if (type === "group") {
-      const reorderedStores = [...stores];
+      const reorderedPlans = [...plans];
 
-      const storeSourceIndex = source.index;
-      const storeDestinatonIndex = destination.index;
+      const planSourceIndex = source.index;
+      const planDestinatonIndex = destination.index;
 
-      const [removedStore] = reorderedStores.splice(storeSourceIndex, 1);
-      reorderedStores.splice(storeDestinatonIndex, 0, removedStore);
+      const [removedPlan] = reorderedPlans.splice(planSourceIndex, 1);
+      reorderedPlans.splice(planDestinatonIndex, 0, removedPlan);
 
-      return setStores(reorderedStores);
+      return setPlans(reorderedPlans);
     }
     const itemSourceIndex = source.index;
     const itemDestinationIndex = destination.index;
 
-    const storeSourceIndex = stores.findIndex(
-      (store) => store.id === source.droppableId
+    const planSourceIndex = plans.findIndex(
+      (plan) => plan.id === source.droppableId
     );
-    const storeDestinationIndex = stores.findIndex(
-      (store) => store.id === destination.droppableId
+    const planDestinationIndex = plans.findIndex(
+      (plan) => plan.id === destination.droppableId
     );
 
-    const newSourceItems = [...stores[storeSourceIndex].items];
+    const newSourceItems = [...plans[planSourceIndex].items];
     const newDestinationItems =
       source.droppableId !== destination.droppableId
-        ? [...stores[storeDestinationIndex].items]
+        ? [...plans[planDestinationIndex].items]
         : newSourceItems;
 
     const [deletedItem] = newSourceItems.splice(itemSourceIndex, 1);
     newDestinationItems.splice(itemDestinationIndex, 0, deletedItem);
 
-    const newStores = [...stores];
+    const newPlans = [...plans];
 
-    newStores[storeSourceIndex] = {
-      ...stores[storeSourceIndex],
+    newPlans[planSourceIndex] = {
+      ...plans[planSourceIndex],
       items: newSourceItems,
     };
-    newStores[storeDestinationIndex] = {
-      ...stores[storeDestinationIndex],
+    newPlans[planDestinationIndex] = {
+      ...plans[planDestinationIndex],
       items: newDestinationItems,
     };
 
-    setStores(newStores);
+    
+
+    setPlans(newPlans);
 
     if (
       source.droppableId === "suggestions" &&
       destination.droppableId === "stack"
     ) {
+      setSelectedItemInfo(null)
       const addedItem = newDestinationItems[itemDestinationIndex];
       setTotalCO2((prevTotalCO2) => prevTotalCO2 + addedItem.co2);
       setSelectedItemInfo(addedItem)
@@ -177,7 +178,7 @@ function App() {
       source.droppableId === "stack" &&
       destination.droppableId === "suggestions"
     ) {
-      const removedItem = deletedItem; // Use the deletedItem here
+      const removedItem = deletedItem;
       setTotalCO2((prevTotalCO2) => prevTotalCO2 - removedItem.co2);
       setSelectedItemInfo(null)
     }
@@ -202,7 +203,7 @@ function App() {
             <div className="info-besparelse">
               {selectedItemInfo && (
                 <>
-                  <p><b>Tiltag:</b> {selectedItemInfo.name}</p>
+                  <p><b>Tiltag:</b> <big style={{color:selectedItemInfo.backgroundColor}}>{selectedItemInfo.name}</big></p>
                   <p><b>Info:</b> {selectedItemInfo.info}</p>
                   <p><b>Besparelse:</b> {selectedItemInfo.co2} ton CO2 årligt</p>
                 </>
@@ -211,9 +212,9 @@ function App() {
             <Droppable droppableId="ROOT" type="group">
               {(provided) => (
                 <div className="flex" {...provided.droppableProps} ref={provided.innerRef}>
-                  {stores.map((store, index) => (
-                    <div className="w-1/2" key={store.id}>
-                      <StoreList {...store} />
+                  {plans.map((plan, index) => (
+                    <div className="w-1/2" key={plan.id}>
+                      <PlanList {...plan} setSelectedItemInfo={setSelectedItemInfo} />
                     </div>
                   ))}
                   {provided.placeholder}
@@ -228,12 +229,22 @@ function App() {
   );
 }
 
-function StoreList({ name, items, id }) {
+function PlanList({ name, items, id, setSelectedItemInfo }) {
+
+  const [ selectedItemId, setSelectedItemId] = useState(null)
+
+
+  const handleItemClick = (item) => {
+    setSelectedItemInfo(item);
+    setSelectedItemId(item.id)
+  };
+
+
   return (
     <Droppable droppableId={id}>
       {(provided) => (
         <div className="min-h-[800px] bg-gray-100 p-4 rounded-lg text-center" {...provided.droppableProps} ref={provided.innerRef}>
-          <div className="store-container flex">
+          <div className="plan-container flex">
             <h3 className="box-header">{name}</h3>
           </div>
           <div>
@@ -242,11 +253,12 @@ function StoreList({ name, items, id }) {
                 {(provided) => (
                   <div
                     className="item-container"
+                    onClick={() => handleItemClick(item)}
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}
                   >
-                    <Box size={item.amount} color={item.backgroundColor} name={item.name} />
+                    <Box size={item.amount} color={item.backgroundColor} name={item.name}/>
                   </div>
                 )}
               </Draggable>
