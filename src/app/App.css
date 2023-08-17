@@ -20,6 +20,7 @@
   .game-container {
     min-height: 600px;
     background-color: #ffffff;
+    color: #162c41;
     width: 100%;
     padding: 10px;
   }
