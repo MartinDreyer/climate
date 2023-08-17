@@ -229,14 +229,38 @@ function App() {
   );
 }
 
-function PlanList({ name, items, id, setSelectedItemInfo }) {
+function PlanList({ name, items, id, setSelectedItemInfo, moveItem}) {
 
   const [ selectedItemId, setSelectedItemId] = useState(null)
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item, id) => {
     setSelectedItemInfo(item);
     setSelectedItemId(item.id)
+  };
+
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    setPosition({ x: touch.clientX, y: touch.clientY });
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - position.x;
+    const deltaY = touch.clientY - position.y;
+
+    setPosition({ x: touch.clientX, y: touch.clientY });
+    // Update the element's position here using deltaX and deltaY
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
   };
 
 
@@ -254,6 +278,9 @@ function PlanList({ name, items, id, setSelectedItemInfo }) {
                   <div
                     className="item-container"
                     onClick={() => handleItemClick(item)}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}

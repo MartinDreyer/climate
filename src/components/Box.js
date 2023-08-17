@@ -22,7 +22,7 @@ export default function Box({ size, color, id, name }) {
       <div
         style={style}
         id={id}
-        className={`flex justify-center items-center box`}>
+        className={`flex justify-center items-center box `}>
         <p className="hide-on-mobile">
           {name}
         </p>
