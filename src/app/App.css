@@ -62,4 +62,9 @@
       display: none;
     }
   }
+ @media (min-width: 650px) {
+    .hide-on-desktop {
+      display: none;
+    }
+  }
   
