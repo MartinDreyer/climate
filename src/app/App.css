@@ -75,3 +75,14 @@
      }
   }
   
+
+  .grayed-out {
+    opacity: 0.5; /* Apply desired opacity for grayed-out effect */
+    pointer-events: none; /* Disable pointer events to prevent dragging */
+    cursor: not-allowed; /* Show 'not-allowed' cursor on grayed-out items */
+  }
+
+  .__className_20951f{
+    height: 100vh;
+    background-color: white;
+  }

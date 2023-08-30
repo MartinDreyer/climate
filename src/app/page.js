@@ -1,100 +1,93 @@
 'use client'
-
 import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import "./App.css";
 import Box from "@/components/Box";
-
 const initialColumns = [
-  {
-    id: "suggestions",
-    name: "Forslag",
-    items: [
-      {
-        name: 'Lavere hastigheden i byen',
-        amount: 53.33,
-        backgroundColor: '#664144',
-        id: 'id-0',
-        co2: 16000,
-        info: "Fartgrænser sænkes med 20 kilometer i timen"
-      },
-      {
-        name: 'Lavere hastighed på Fynske Motorvej',
-        amount: 46.66,
-        backgroundColor: '#88722C',
-        id: 'id-1',
-        co2: 14000,
-        info: "Fartgrænsen sænkes til 90 kilometer i timen"
-
-      },
-      {
-        name: 'Bedre kollektiv trafik',
-        amount: 30,
-        backgroundColor: '#92961E',
-        id: 'id-2',
-        co2: 9000,
-        info: "Separate busbaner og flere afgange"
-
-      },
-      {
-        name: 'Non-road',
-        amount: 33.33,
-        backgroundColor: '#F9844A',
-        id: 'id-3',
-        co2: 10000,
-        info: "Indkøb af maskiner, der fremmer grøn omstilling"
-      },
-      {
-        name: 'Klimavenlige byområder',
-        amount: 66.66,
-        backgroundColor: '#a6784F',
-        id: 'id-4',
-        co2: 20000,
-        info: "Flere zoner til fodgængere og cyklister, især omkring skoler"
-      },
-      {
-        name: 'Elektrificering og parkering',
-        amount: 70,
-        backgroundColor: '#90BE6D',
-        id: 'id-5',
-        co2: 21000,
-        info: "40 procent af biler skal være elbiler samt elbilparkeringspladser"
-
-      },
-      {
-        name: 'Samkørsel og delebiler',
-        amount: 33.33,
-        backgroundColor: '#43AA8B',
-        id: 'id-6',
-        co2: 10000,
-        info: "Fremme samkørsel og parkeringspladser til delebiler"
-      },
-      {
-        name: 'Trafikøer',
-        amount: 60,
-        backgroundColor: '#4D908E',
-        id: 'id-7',
-        co2: 18000,
-        info: "Vejlukninger, så bilister skal ud på de store veje for at køre på tværs af områder"
-      },
-      {
-        name: 'Trafikøer uden for Ring 2',
-        amount: 43.33,
-        backgroundColor: '#577590',
-        id: 'id-8',
-        co2: 13000,
-        info: "Vejlukninger uden for ringvejen omkring byen, så bilister ikke kan køre mellem områderne"
-      },
-      {
-        name: 'Nulemissionszoner inden for Ring 2',
-        amount: 153.33,
-        backgroundColor: '#277DA1',
-        id: 'id-9',
-        co2: 46000,
-        info: "Områder, hvor benzin- og hybridbiler ikke må køre ind"
-      }
-
-    ]
+  { "id": "suggestions",
+  "name": "Forslag",
+  "items": [
+    {
+      "name": "Lavere hastigheden i byen",
+      "amount": 53.33,
+      "backgroundColor": "rgba(81, 158, 138, 0.4)",
+      "id": "id-0",
+      "co2": 16000,
+      "info": "Fartgrænser sænkes med 20 kilometer i timen"
+    },
+    {
+      "name": "Lavere hastighed på Fynske Motorvej",
+      "amount": 46.66,
+      "backgroundColor": "rgba(100, 100, 100, 1)",
+      "id": "id-1",
+      "co2": 14000,
+      "info": "Fartgrænsen sænkes til 90 kilometer i timen"
+    },
+    {
+      "name": "Bedre kollektiv trafik",
+      "amount": 30,
+      "backgroundColor": "rgba(81, 158, 138, 0.6)",
+      "id": "id-2",
+      "co2": 9000,
+      "info": "Separate busbaner og flere afgange"
+    },
+    {
+      "name": "Non-road",
+      "amount": 33.33,
+      "backgroundColor": "rgba(81, 158, 138, 0.75)",
+      "id": "id-3",
+      "co2": 10000,
+      "info": "Indkøb af maskiner, der fremmer grøn omstilling"
+    },
+    {
+      "name": "Klimavenlige byområder",
+      "amount": 66.66,
+      "backgroundColor": "rgba(81, 158, 138, 0.9)",
+      "id": "id-4",
+      "co2": 20000,
+      "info": "Flere zoner til fodgængere og cyklister, især omkring skoler"
+    },
+    {
+      "name": "Elektrificering og parkering",
+      "amount": 70,
+      "backgroundColor": "rgba(81, 158, 138, 1)",
+      "id": "id-5",
+      "co2": 21000,
+      "info": "40 procent af biler skal være elbiler samt elbilparkeringspladser"
+    },
+    {
+      "name": "Samkørsel og delebiler",
+      "amount": 33.33,
+      "backgroundColor": "rgba(81, 158, 138, 0.75)",
+      "id": "id-6",
+      "co2": 10000,
+      "info": "Fremme samkørsel og parkeringspladser til delebiler"
+    },
+    {
+      "name": "Trafikøer",
+      "amount": 60,
+      "backgroundColor": "rgba(81, 158, 138, 0.6)",
+      "id": "id-7",
+      "co2": 18000,
+      "info": "Vejlukninger, så bilister skal ud på de store veje for at køre på tværs af områder"
+    },
+    {
+      "name": "Trafikøer uden for Ring 2",
+      "amount": 43.33,
+      "backgroundColor": "rgba(81, 158, 138, 0.45)",
+      "id": "id-8",
+      "co2": 13000,
+      "info": "Vejlukninger uden for ringvejen omkring byen, så bilister ikke kan køre mellem områderne"
+    },
+    {
+      "name": "Nulemissionszoner inden for Ring 2",
+      "amount": 153.33,
+      "backgroundColor": "rgba(81, 158, 138, 1)",
+      "id": "id-9",
+      "co2": 46000,
+      "info": "Områder, hvor benzin- og hybridbiler ikke må køre ind"
+    }
+  ]
   },
   {
     id: "stack",
@@ -103,6 +96,8 @@ const initialColumns = [
   }
 
 ]
+
+
 
 
 function App() {
@@ -229,7 +224,7 @@ function App() {
   );
 }
 
-function PlanList({ name, items, id, setSelectedItemInfo, moveItem}) {
+function PlanList({ name, items, id, setSelectedItemInfo}) {
 
   const [ selectedItemId, setSelectedItemId] = useState(null)
   const [isDragging, setIsDragging] = useState(false);
@@ -267,16 +262,27 @@ function PlanList({ name, items, id, setSelectedItemInfo, moveItem}) {
   return (
     <Droppable droppableId={id}>
       {(provided) => (
-        <div className="min-h-[800px] bg-gray-100 p-4 rounded-lg text-center" {...provided.droppableProps} ref={provided.innerRef}>
+        <div
+          className="min-h-[800px] bg-gray-100 p-4 rounded-lg text-center"
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+        >
           <div className="plan-container flex">
             <h3 className="box-header">{name}</h3>
           </div>
           <div>
             {items.map((item, index) => (
-              <Draggable draggableId={item.id} index={index} key={item.id}>
+              <Draggable
+                draggableId={item.id}
+                index={index}
+                key={item.id}
+                isDragDisabled={item.id === 'id-1'} // Disable dragging for 'Lavere hastighed på Fynske Motorvej'
+              >
                 {(provided) => (
                   <div
-                    className="item-container"
+                    className={`item-container ${
+                      item.id === 'id-1' ? 'grayed-out' : '' // Add a class for styling
+                    }`}
                     onClick={() => handleItemClick(item)}
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
@@ -285,7 +291,11 @@ function PlanList({ name, items, id, setSelectedItemInfo, moveItem}) {
                     {...provided.draggableProps}
                     ref={provided.innerRef}
                   >
-                    <Box size={item.amount} color={item.backgroundColor} name={item.name}/>
+                    <Box
+                      size={item.amount}
+                      color={item.backgroundColor}
+                      name={item.name}
+                    />
                   </div>
                 )}
               </Draggable>
